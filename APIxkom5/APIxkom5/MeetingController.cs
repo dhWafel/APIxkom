@@ -4,19 +4,40 @@ using System.Collections.Generic;
 namespace APIxkom5 {
 	public class MeetingController {
 
-		List<Meeting> meetings = new List<Meeting>();
+		private List<Meeting> meetings = new List<Meeting>();
 
-		public void AddMeeting(Meeting data) {
-			meetings.Add(data);
+		public void AddMeeting(string name) {
+			meetings.Add(new Meeting(name));
         }
 
-		public void RemoveMeeting() {
+		public void RemoveMeeting(string name) {
+			
+			foreach(Meeting m in meetings) 
+			{
+				if (m.Name.Equals(name)) 
+				{
+					meetings.Remove(m);
+					break;
+				}
+			}
 
         }
 
-		public void ReturnMeetings() {
-
+		public List<Meeting> ReturnMeetings() {
+			return meetings;
         }
+
+		public void AddUser(string meeting_name, User user) 
+		{
+			foreach (Meeting m in meetings) 
+			{
+				if (m.Name.Equals(meeting_name)) 
+				{
+					m.AddUser(user);
+					break;
+				}
+			}
+		}
 
 	}
 }
