@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -7,56 +8,84 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace APIxkom5 {
-    class Connection {
+    internal class Connection {
 
-        private SqlConnection connection;
+        private MySqlConnection m_connection;
+        private MySqlCommand m_command = new MySqlCommand();
+        private MySqlDataReader dataReader;
+
+        private List<Meeting> list = new List<Meeting>();
+
+        private const string selectSql = "SELECT * FROM meetings ";
+        private const string selectByNameSql = "SELECT * FROM `meetings` WHERE MeetingName = {0}";
 
 
-        public void execute(string instruction) 
-        {
-            //SqlCommand sc = connection.CreateCommand();
-            
+        public List<Meeting> GetMeetings() {
 
+            string connectionString = GetConnectionString();
+            m_connection = new MySqlConnection(connectionString);
+            m_command = new MySqlCommand(selectSql, m_connection);
+
+            m_connection.Open();
+            dataReader = m_command.ExecuteReader();
+
+            while (dataReader.Read()) {
+                int id = (int)dataReader["MeetingId"];
+                string name = dataReader["MeetingName"].ToString();
+                Meeting m = new Meeting(name);
+                list.Add(m);
+            }
+            m_connection.Close();
+            return list;
         }
 
-        private bool Connect() {
+        public string ReturnMeetingByName(string meetingName) {
+            return Execute(String.Format(selectByNameSql, meetingName));
+        }
+
+        public string AddMeeting(string meetingName) {
+            return Execute(m_command.CommandText = "INSERT INTO meetings (MeetingName) VALUES ('" + meetingName + "')");
+        }
+
+        public string RemoveMeeting(string meetingName) {
+            return Execute(m_command.CommandText = "DELETE FROM meetings WHERE MeetingName = '" + meetingName + "'");
+        }
+
+        public string AddUser(User user) {
+            return Execute(m_command.CommandText = "INSERT INTO users (UserName, UserMail) VALUES ('" + user.UserName + "," + user.Email + "')");
+        }
             
-            string connectionString = GetConnectionString();
-            connection = new SqlConnection(connectionString);
+        private string Execute(String query) {
+
+            string connectionString = GetConnectionString();     
+            m_connection = new MySqlConnection(connectionString);
+
             try {
-                connection.Open();
 
+                m_connection.Open();
+                m_command = new MySqlCommand(query, m_connection);
+                m_command.ExecuteNonQuery();
+                Console.WriteLine("GOTOWE");
 
-                //TU OPERACJE NA BAZIE DANYCH
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Połączenie OK");
-                Console.ResetColor();
-                //Console.WriteLine("Połączenie OK");
-            } catch (SqlException se) {
-                Console.WriteLine("Błąd: " + se.StackTrace);
+            } catch (Exception ex) {
+                Console.WriteLine("Błąd: " + ex.Message);
             } finally {
-                if (connection.State == ConnectionState.Open) {
-                    Console.WriteLine("Zamknięcie połączenia");
-                    connection.Close();
+                if (m_connection.State == ConnectionState.Open) {
+                    m_connection.Close();
                 }
-            }
-
-            return true;
+            } 
+            return "";
         } 
-
 
         private static string GetConnectionString() {
             string host = "localhost";
-            int tcpPort = 1433;
-            string dbName = "MyDatabaseFernus";
-            string login = "DESKTOP-8RSPAER,28ferny";
-            string password = "";
+            string dbName = "challenge";
+            string login = "root";
 
             string connectionString =
-                "Data Source=" + host + "," + tcpPort +
+                "server=" + host + "," +
                 ";Initial Catalog=" + dbName +
-                ";User Id=" + login +
-                ";Password=" + password + ";";
+                ";User Id=" + login + ";";
 
             return connectionString;
         }

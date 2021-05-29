@@ -5,38 +5,35 @@ namespace APIxkom5 {
 	public class MeetingController {
 
 		private List<Meeting> meetings = new List<Meeting>();
+		private Connection connection = new Connection();
 
 		public void AddMeeting(string name) {
-			meetings.Add(new Meeting(name));
+			connection.AddMeeting(name);
         }
 
 		public void RemoveMeeting(string name) {
-			
-			foreach(Meeting m in meetings) 
-			{
-				if (m.Name.Equals(name)) 
-				{
-					meetings.Remove(m);
-					break;
-				}
-			}
-
+			connection.RemoveMeeting(name);
         }
 
 		public List<Meeting> ReturnMeetings() {
-			return meetings;
+			return connection.GetMeetings();
         }
 
-		public void AddUser(string meeting_name, User user) 
-		{
+		/*public void AddUser(string meetingName, User user) {
+			connection.AddUser(meetingName, user);
+
 			foreach (Meeting m in meetings) 
 			{
-				if (m.Name.Equals(meeting_name)) 
+				if (m.Name.Equals(meetingName)) 
 				{
 					m.AddUser(user);
 					break;
 				}
 			}
+		}*/
+
+		public void AddUser(User user) {
+			connection.AddUser(user);
 		}
 
 	}

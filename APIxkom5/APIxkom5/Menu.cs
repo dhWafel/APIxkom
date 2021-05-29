@@ -7,15 +7,13 @@ using System.Threading.Tasks;
 namespace APIxkom5 {
     class Menu {
 
-        private Connection connection;
         private MeetingController meetingController;
 
         private int activeOptionMenu = 0;
 
 
-        public Menu(Connection connection, MeetingController meetingController) 
-        {
-            this.connection = connection;
+        public Menu(MeetingController meetingController) {
+
             this.meetingController = meetingController;
         }
 
@@ -146,8 +144,9 @@ namespace APIxkom5 {
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.SetCursorPosition(2, 9);
             string mail = Console.ReadLine();
+
             User newUser = new User(name, mail);
-            meetingController.AddUser(meetingname, newUser);
+            meetingController.AddUser(newUser);
             Console.ReadKey();
         }
     }
