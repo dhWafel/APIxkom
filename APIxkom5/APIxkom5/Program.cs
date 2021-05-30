@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-
+﻿
 namespace APIxkom5 {
     internal class Program {
         static void Main(string[] args) {

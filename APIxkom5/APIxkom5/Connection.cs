@@ -2,10 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace APIxkom5 {
     internal class Connection {
@@ -17,8 +13,6 @@ namespace APIxkom5 {
         private List<Meeting> list = new List<Meeting>();
 
         private const string selectSql = "SELECT * FROM meetings ";
-        private const string selectByNameSql = "SELECT * FROM `meetings` WHERE MeetingName = {0}";
-
 
         public List<Meeting> GetMeetings() {
 
@@ -40,7 +34,26 @@ namespace APIxkom5 {
         }
 
         public string ReturnMeetingByName(string meetingName) {
-            return Execute(String.Format(selectByNameSql, meetingName));
+
+            string connectionString = GetConnectionString();
+            m_connection = new MySqlConnection(connectionString);
+            m_command = new MySqlCommand(selectSql, m_connection);
+
+            m_connection.Open();
+            dataReader = m_command.ExecuteReader();
+
+            while (dataReader.Read()) {
+
+                int id = (int)dataReader["MeetingId"];
+                string name = dataReader["MeetingName"].ToString();
+
+                if (name.Equals(meetingName)){
+
+                    m_connection.Close();
+                    return id.ToString();
+                }
+            }
+            return null;
         }
 
         public string AddMeeting(string meetingName) {
@@ -51,8 +64,9 @@ namespace APIxkom5 {
             return Execute(m_command.CommandText = "DELETE FROM meetings WHERE MeetingName = '" + meetingName + "'");
         }
 
-        public string AddUser(User user) {
-            return Execute(m_command.CommandText = "INSERT INTO users (UserName, UserMail) VALUES ('" + user.UserName + "," + user.Email + "')");
+        public string AddUser(User user, string meetingName) {
+            string id = ReturnMeetingByName(meetingName);
+            return Execute(m_command.CommandText = "INSERT INTO users (MeetingId, UserName, UserMail) VALUES ('"+ id + "','" + user.UserName + "','" + user.Email + "')");
         }
             
         private string Execute(String query) {
@@ -61,11 +75,9 @@ namespace APIxkom5 {
             m_connection = new MySqlConnection(connectionString);
 
             try {
-
                 m_connection.Open();
                 m_command = new MySqlCommand(query, m_connection);
                 m_command.ExecuteNonQuery();
-                Console.WriteLine("GOTOWE");
 
             } catch (Exception ex) {
                 Console.WriteLine("Błąd: " + ex.Message);

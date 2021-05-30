@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace APIxkom5 {
     public class User {
         private string userName;
@@ -25,9 +20,5 @@ namespace APIxkom5 {
             this.userName = userName;
             this.email = email;
         }
-
-        
-
-
     }
 }

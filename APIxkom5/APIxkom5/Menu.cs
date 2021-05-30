@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace APIxkom5 {
     class Menu {
@@ -114,8 +111,9 @@ namespace APIxkom5 {
 
             List<Meeting> meetings = meetingController.ReturnMeetings();
 
-            Console.Write("Lista spotkan: \n");
-            Console.Write("");
+            Console.Write("Lista spotkań: \n");
+            Console.WriteLine("");
+
             foreach (Meeting m in meetings) 
             {
                 Console.WriteLine(m);
@@ -146,7 +144,7 @@ namespace APIxkom5 {
             string mail = Console.ReadLine();
 
             User newUser = new User(name, mail);
-            meetingController.AddUser(newUser);
+            meetingController.AddUser(newUser, meetingname);
             Console.ReadKey();
         }
     }

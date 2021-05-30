@@ -1,8 +1,5 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace APIxkom5
     {
@@ -32,7 +29,7 @@ namespace APIxkom5
         }
 
         public override string ToString() {
-            string result = "Meeting " + name + " :\n";
+            string result = " " + name + "\n";
             int index = 1;
             foreach (User u in users) 
             {

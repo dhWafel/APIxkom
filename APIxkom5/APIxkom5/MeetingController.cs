@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
 
 namespace APIxkom5 {
@@ -19,22 +19,8 @@ namespace APIxkom5 {
 			return connection.GetMeetings();
         }
 
-		/*public void AddUser(string meetingName, User user) {
-			connection.AddUser(meetingName, user);
-
-			foreach (Meeting m in meetings) 
-			{
-				if (m.Name.Equals(meetingName)) 
-				{
-					m.AddUser(user);
-					break;
-				}
-			}
-		}*/
-
-		public void AddUser(User user) {
-			connection.AddUser(user);
+		public void AddUser(User user, string meetingName) {
+			connection.AddUser(user, meetingName);
 		}
-
 	}
 }
